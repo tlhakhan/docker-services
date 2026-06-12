@@ -1,0 +1,18 @@
+services:
+  transmission:
+    build:
+      context: ./build
+      dockerfile: Dockerfile
+    container_name: transmission
+    ports:
+      - "${WEBUI_PORT:-9091}:9091"
+      - "${PEER_PORT:-51413}:51413"
+      - "${PEER_PORT:-51413}:51413/udp"
+    volumes:
+      - ${DOWNLOADS_PATH:-./data/downloads}:/downloads
+      - ${CONFIG_PATH:-./data/config}:/config
+    environment:
+      - TRANSMISSION_USERNAME=${TRANSMISSION_USERNAME}
+      - TRANSMISSION_PASSWORD=${TRANSMISSION_PASSWORD}
+      - PEER_PORT=${PEER_PORT:-51413}
+    restart: unless-stopped
