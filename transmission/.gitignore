@@ -1,2 +1,7 @@
 .env
-data/
+data/config/*
+!data/config/.gitkeep
+data/downloads/complete/*
+!data/downloads/complete/.gitkeep
+data/downloads/incomplete/*
+!data/downloads/incomplete/.gitkeep

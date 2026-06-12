@@ -1,9 +1,19 @@
 #!/bin/bash
 set -e
 
-CONFIG_FILE="/config/settings.json"
+PUID=${PUID:-1000}
+PGID=${PGID:-1000}
+
+# Remap debian-transmission's UID/GID to match the host user so that files
+# written to bind-mounted volumes appear with the correct ownership on the host.
+# -o allows non-unique IDs in case the target UID/GID is already taken in the container.
+groupmod -og "$PGID" debian-transmission
+usermod -ou "$PUID" debian-transmission
 
 mkdir -p /downloads/complete /downloads/incomplete /config
+chown -R debian-transmission:debian-transmission /downloads /config
+
+CONFIG_FILE="/config/settings.json"
 
 # Write initial config only on first start; transmission rewrites this file on shutdown,
 # so subsequent starts will use whatever settings are persisted in the config volume.
@@ -23,6 +33,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
     "umask": 2
 }
 EOF
+    chown debian-transmission:debian-transmission "$CONFIG_FILE"
 fi
 
-exec transmission-daemon --foreground --config-dir /config
+exec runuser -u debian-transmission -- transmission-daemon --foreground --config-dir /config

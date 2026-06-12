@@ -5,8 +5,6 @@ RUN apt-get update \
         transmission-daemon \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /downloads/complete /downloads/incomplete /config
-
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
